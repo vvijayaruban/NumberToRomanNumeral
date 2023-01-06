@@ -2,6 +2,8 @@
 
 public class Convert
 {
+    private const int SupportedUpperLimit = 2000;
+
     public static readonly IReadOnlyDictionary<int, string> RomanNumeralsDenominations = new Dictionary<int, string>
     {
         {1, "I"},
@@ -13,26 +15,34 @@ public class Convert
         {1000, "M"}
     };
 
-    //public static Stack<int> OrderDenominationsStacks { get; } =
-    //    new(RomanNumeralsDenominations.OrderBy(x => x.Key).Select(x => x.Key));
-
     public static string ToRomanNumeral(int number)
     {
-        if (number <= 0)
-            throw new InvalidDataException("Input should be a Natural Number to convert it to a Roman Numeral.");
+        ValidateInput(number);
         if (RomanNumeralsDenominations.TryGetValue(number, out var value))
         {
             return value;
         }
 
-        //var pop = OrderDenominationsStacks.Pop();
-        //if (number > pop)
-        //{
-        //    var quotient = number / pop;
-        //    var remainder = number % pop;
-
-        //}
-
         return "";
+    }
+
+
+    private static void ValidateInput(int number)
+    {
+        if (!IsNaturalNumber(number))
+        {
+            throw new InvalidDataException("Input should be a Natural Number to convert it to a Roman Numeral.");
+        }
+
+        if (number > SupportedUpperLimit)
+        {
+            throw new ArgumentOutOfRangeException(nameof(number),
+                $"The supported upper limit of {nameof(ToRomanNumeral)} is {SupportedUpperLimit}.");
+        }
+    }
+
+    private static bool IsNaturalNumber(int number)
+    {
+        return number > 0;
     }
 }

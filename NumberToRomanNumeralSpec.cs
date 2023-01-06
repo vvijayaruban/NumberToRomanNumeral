@@ -29,4 +29,10 @@ public class NumberToRomanNumeralSpec
     {
         Convert.ToRomanNumeral(number).ShouldBe(result);
     }
+
+    [Fact]
+    public void Input_higher_than_the_supported_upper_limit_would_throw_ArgumentOutOfRangeException()
+    {
+        Should.Throw<ArgumentOutOfRangeException>(() => Convert.ToRomanNumeral(2001));
+    }
 }
