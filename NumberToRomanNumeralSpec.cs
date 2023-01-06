@@ -19,6 +19,9 @@ namespace NumberToRomanNumeral;
     {
         public static string ToRomanNumeral(int number)
         {
+            if (number <= 0)
+                throw new InvalidDataException("Input should be a Natural Number to convert it to a Roman Numeral.");
+
             return "";
         }
     }
@@ -29,5 +32,11 @@ public class NumberToRomanNumeralSpec
     public void _0_is_an_invalid_Roman_number()
     {
         Should.Throw<InvalidDataException>(() => Convert.ToRomanNumeral(0));
+    }
+
+    [Fact]
+    public void Negative_an_invalid_Roman_number()
+    {
+        Should.Throw<InvalidDataException>(() => Convert.ToRomanNumeral(-1));
     }
 }
