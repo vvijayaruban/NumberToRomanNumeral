@@ -15,16 +15,32 @@ namespace NumberToRomanNumeral;
     Note any code you develop is your code. It will not be copied or reused / repurposed within XPS.  
  */
 
-    public class Convert
+public class Convert
+{
+    public static readonly IReadOnlyDictionary<int, string> RomanNumeralsDenominations = new Dictionary<int, string>
     {
-        public static string ToRomanNumeral(int number)
-        {
-            if (number <= 0)
-                throw new InvalidDataException("Input should be a Natural Number to convert it to a Roman Numeral.");
+        {1, "I"},
+        {5, "V"},
+        {10, "X"},
+        {50, "L"},
+        {100, "C"},
+        {500, "D"},
+        {1000, "M"}
+    };
 
-            return "";
+
+    public static string ToRomanNumeral(int number)
+    {
+        if (number <= 0)
+            throw new InvalidDataException("Input should be a Natural Number to convert it to a Roman Numeral.");
+        if (RomanNumeralsDenominations.TryGetValue(number, out var value))
+        {
+            return value;
         }
+
+        return "";
     }
+}
 
 public class NumberToRomanNumeralSpec
 {
@@ -35,8 +51,21 @@ public class NumberToRomanNumeralSpec
     }
 
     [Fact]
-    public void Negative_an_invalid_Roman_number()
+    public void Negatives_are_invalid_Roman_numbers()
     {
         Should.Throw<InvalidDataException>(() => Convert.ToRomanNumeral(-1));
+    }
+
+    [Theory]
+    [InlineData(1000, "M")]
+    [InlineData(500, "D")]
+    [InlineData(100, "C")]
+    [InlineData(50, "L")]
+    [InlineData(10, "X")]
+    [InlineData(5, "V")]
+    [InlineData(1, "I")]
+    public void Validate_Roman_Numerals_Denominations(int number, string result)
+    {
+        Convert.ToRomanNumeral(number).ShouldBe(result);
     }
 }
