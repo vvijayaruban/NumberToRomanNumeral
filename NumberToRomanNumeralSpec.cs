@@ -28,6 +28,8 @@ public class Convert
         {1000, "M"}
     };
 
+    public static Stack<int> OrderDenominationsStacks { get; } =
+        new(RomanNumeralsDenominations.OrderBy(x => x.Key).Select(x => x.Key));
 
     public static string ToRomanNumeral(int number)
     {
@@ -36,6 +38,14 @@ public class Convert
         if (RomanNumeralsDenominations.TryGetValue(number, out var value))
         {
             return value;
+        }
+
+        var pop = OrderDenominationsStacks.Pop();
+        if (number > pop)
+        {
+            var quotient = number / pop;
+            var remainder = number % pop;
+
         }
 
         return "";
