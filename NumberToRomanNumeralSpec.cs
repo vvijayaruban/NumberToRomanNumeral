@@ -1,4 +1,5 @@
 ﻿using Shouldly;
+using System.Globalization;
 using Xunit;
 
 namespace NumberToRomanNumeral;
@@ -36,9 +37,23 @@ public class NumberToRomanNumeralSpec
         Should.Throw<ArgumentOutOfRangeException>(() => Convert.ToRomanNumeral(2001));
     }
 
-    [Theory]
-    [InlineData(1000, "M")]
-    [InlineData(1500, "MD")]
+    public static TheoryData<int, string> ReadTestDataFromTextFile()
+    {
+        var data = new TheoryData<int, string>();
+        var fileContent = TestDataProvider
+            .DataTestingNumbersContainingTwoOrMoreDecimalDigitsIsBuiltByAppendingTheRomanNumeralEquivalentForEachFromHighestToLowest;
+        foreach (var line in fileContent.Split(Environment.NewLine))
+        {
+            var lingSplits = line.Split('=');
+            var digit = int.Parse(lingSplits.First().Trim(), NumberStyles.AllowThousands);
+            var roman = lingSplits.Last().Trim(' ', '.').Split(' ').First();
+            data.Add(digit, roman);
+        }
+
+        return data;
+    }
+
+    [Theory, MemberData(nameof(ReadTestDataFromTextFile))]
     public void Two_or_more_decimal_digits_would_give_Roman_numeral_by_appending_each_from_highest_to_lowest(int number, string result)
     {
         Convert.ToRomanNumeral(number).ShouldBe(result);
@@ -72,7 +87,7 @@ public class NumberToRomanNumeralSpec
 
     [Theory, MemberData(nameof(ReadIndividualDecimalPlacesTable))]
     public void
-        Testing_numbers_containing_two_or_more_decimal_digits_is_built_by_appending_the_Roman_numeral_equivalent_for_each_from_highest_to_lowest2(
+        Validate_Individual_Decimal_Places_Table(
             string decimalPlace, int digit, string roman)
     {
         Convert.GetRomanNumeral(decimalPlace, digit).ShouldBe(roman);

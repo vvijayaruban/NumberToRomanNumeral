@@ -8,10 +8,12 @@
 
   <ItemGroup>
     <None Remove="TestData\Data_for_Individual_decimal_places.txt" />
+    <None Remove="TestData\Data_testing_numbers_containing_two_or_more_decimal_digits_is_built_by_appending_the_Roman_numeral_equivalent_for_each_from_highest_to_lowest.txt" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="TestData\Data_for_Individual_decimal_places.txt" />
+    <EmbeddedResource Include="TestData\Data_testing_numbers_containing_two_or_more_decimal_digits_is_built_by_appending_the_Roman_numeral_equivalent_for_each_from_highest_to_lowest.txt" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.4.1" />
