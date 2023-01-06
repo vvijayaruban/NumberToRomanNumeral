@@ -5,31 +5,19 @@ namespace NumberToRomanNumeral;
 public class Convert
 {
     private const int SupportedUpperLimit = 2000;
-
-    public static readonly IReadOnlyDictionary<int, string> RomanNumeralsDenominations = new Dictionary<int, string>
-    {
-        {1, "I"},
-        {5, "V"},
-        {10, "X"},
-        {50, "L"},
-        {100, "C"},
-        {500, "D"},
-        {1000, "M"}
-    };
-
-
-    public static readonly IReadOnlyDictionary<string, IReadOnlyDictionary<int, string>> DecimalPlacesMap =
+    
+    private static readonly IReadOnlyDictionary<string, IReadOnlyDictionary<int, string>> DecimalPlacesMap =
         new Dictionary<string, IReadOnlyDictionary<int, string>>
         {
             {
-                DecimalPlaces.Thousands, new Dictionary<int, string>
+                DecimalPlaces.Thousand, new Dictionary<int, string>
                 {
                     {1, "M"},
                     {2, "MM"}
                 }
             },
             {
-                DecimalPlaces.Hundreds, new Dictionary<int, string>
+                DecimalPlaces.Hundred, new Dictionary<int, string>
                 {
                     {1, "C"},
                     {2, "CC"},
@@ -41,25 +29,23 @@ public class Convert
                     {8, "DCCC"},
                     {9, "CM"}
                 }
-            }
-            ,
+            },
             {
-                DecimalPlaces.Tens, new Dictionary<int, string>
+                DecimalPlaces.Ten, new Dictionary<int, string>
                 {
                     {1, "X"},
                     {2, "XX"},
                     {3, "XXX"},
                     {4, "XL"},
                     {5, "L"},
-                    {6, "DC"},
-                    {7, "DCC"},
-                    {8, "DCCC"},
-                    {9, "CM"}
+                    {6, "LX"},
+                    {7, "LXX"},
+                    {8, "LXXX"},
+                    {9, "XC"}
                 }
-            }
-            ,
+            },
             {
-                DecimalPlaces.Units, new Dictionary<int, string>
+                DecimalPlaces.Unit, new Dictionary<int, string>
                 {
                     {1, "I"},
                     {2, "II"},
@@ -82,7 +68,7 @@ public class Convert
 
         int quotient, remainder = number;
 
-        var thousand = DecimalPlaces.Thousands;
+        var thousand = DecimalPlaces.Thousand;
 
         quotient = remainder / thousand.Value;
         remainder %= thousand.Value;
@@ -96,9 +82,39 @@ public class Convert
         {
             return sb.ToString();
         }
-        
 
-        return "";
+        var hundred = DecimalPlaces.Hundred;
+
+        quotient = remainder / hundred.Value;
+        remainder %= hundred.Value;
+
+        if (quotient > 0)
+        {
+            sb.Append(GetRomanNumeral(hundred, quotient));
+        }
+
+        if (remainder == 0)
+        {
+            return sb.ToString();
+        }
+
+        var ten = DecimalPlaces.Ten;
+        quotient = remainder / ten.Value;
+        remainder %= ten.Value;
+
+        if (quotient > 0)
+        {
+            sb.Append(GetRomanNumeral(ten, quotient));
+        }
+
+        if (remainder == 0)
+        {
+            return sb.ToString();
+        }
+
+        sb.Append(GetRomanNumeral(DecimalPlaces.Unit, remainder));
+
+        return sb.ToString();
     }
 
     public static string GetRomanNumeral(string forDecimalPlace, int position)
@@ -127,11 +143,10 @@ public class Convert
 
     public static class DecimalPlaces
     {
-        public static readonly PlaceValue Thousands = new("Thousands", 1000);
-        public static readonly PlaceValue Hundreds = new("Hundreds", 100);
-        public static readonly PlaceValue Tens = new("Tens", 10);
-        public static readonly PlaceValue Units = new("Units", 1);
-
+        public static readonly PlaceValue Thousand = new("Thousands", 1000);
+        public static readonly PlaceValue Hundred = new("Hundreds", 100);
+        public static readonly PlaceValue Ten = new("Tens", 10);
+        public static readonly PlaceValue Unit = new("Units", 1);
         public class PlaceValue
         {
             public PlaceValue(string name, int value)
