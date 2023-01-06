@@ -25,7 +25,7 @@ public class NumberToRomanNumeralSpec
     [InlineData(10, "X")]
     [InlineData(5, "V")]
     [InlineData(1, "I")]
-    public void Validate_Roman_Numerals_Denominations(int number, string result)
+    public void Roman_Numerals_Denominations(int number, string result)
     {
         Convert.ToRomanNumeral(number).ShouldBe(result);
     }
@@ -34,5 +34,13 @@ public class NumberToRomanNumeralSpec
     public void Input_higher_than_the_supported_upper_limit_would_throw_ArgumentOutOfRangeException()
     {
         Should.Throw<ArgumentOutOfRangeException>(() => Convert.ToRomanNumeral(2001));
+    }
+
+    [Theory]
+    [InlineData(1000, "M")]
+    [InlineData(1500, "MD")]
+    public void Two_or_more_decimal_digits_would_give_a_Roman_numeral_by_appending_each_from_highest_to_lowest(int number, string result)
+    {
+        Convert.ToRomanNumeral(number).ShouldBe(result);
     }
 }

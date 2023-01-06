@@ -1,4 +1,6 @@
-﻿namespace NumberToRomanNumeral;
+﻿using System.Text;
+
+namespace NumberToRomanNumeral;
 
 public class Convert
 {
@@ -16,7 +18,7 @@ public class Convert
     };
 
 
-    public static readonly IReadOnlyDictionary<string, IReadOnlyDictionary<int, string>> IndividualDecimalPlaces =
+    public static readonly IReadOnlyDictionary<string, IReadOnlyDictionary<int, string>> DecimalPlacesMap =
         new Dictionary<string, IReadOnlyDictionary<int, string>>
         {
             {
@@ -76,14 +78,33 @@ public class Convert
     public static string ToRomanNumeral(int number)
     {
         ValidateInput(number);
-        if (RomanNumeralsDenominations.TryGetValue(number, out var value))
+        var sb = new StringBuilder();
+
+        int quotient, remainder = number;
+
+        var thousand = DecimalPlaces.Thousands;
+
+        quotient = remainder / thousand.Value;
+        remainder %= thousand.Value;
+
+        if (quotient > 0)
         {
-            return value;
+            sb.Append(GetRomanNumeral(thousand, quotient));
         }
+
+        if (remainder == 0)
+        {
+            return sb.ToString();
+        }
+        
 
         return "";
     }
 
+    public static string GetRomanNumeral(string forDecimalPlace, int position)
+    {
+        return DecimalPlacesMap[forDecimalPlace][position];
+    }
 
     private static void ValidateInput(int number)
     {
@@ -104,8 +125,28 @@ public class Convert
         return number > 0;
     }
 
-    private static class DecimalPlaces
+    public static class DecimalPlaces
     {
-        public const string Thousands = "Thousands", Hundreds = "Hundreds",Tens = "Tens",Units = "Units";
+        public static readonly PlaceValue Thousands = new("Thousands", 1000);
+        public static readonly PlaceValue Hundreds = new("Hundreds", 100);
+        public static readonly PlaceValue Tens = new("Tens", 10);
+        public static readonly PlaceValue Units = new("Units", 1);
+
+        public class PlaceValue
+        {
+            public PlaceValue(string name, int value)
+            {
+                Name = name;
+                Value = value;
+            }
+
+            public string Name { get; }
+            public int Value { get; }
+
+            public static implicit operator string(PlaceValue placeValue)
+            {
+                return placeValue.Name;
+            }
+        }
     }
 }
