@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Reflection;
+using System.Text;
 
 namespace NumberToRomanNumeral;
 
@@ -66,53 +67,17 @@ public class Convert
         ValidateInput(number);
         var sb = new StringBuilder();
 
-        int quotient, remainder = number;
-
-        var thousand = DecimalPlaces.Thousand;
-
-        quotient = remainder / thousand.Value;
-        remainder %= thousand.Value;
-
-        if (quotient > 0)
+        var remainder = number;
+        foreach (var decimalPlace in DecimalPlaces.PlaceValues
+                     .OrderByDescending(x => x.Key)
+                     .Select(y => y.Value))
         {
-            sb.Append(GetRomanNumeral(thousand, quotient));
+            (var quotient, remainder) = decimalPlace.Divide(remainder);
+
+            if (quotient > 0) sb.Append(GetRomanNumeral(decimalPlace, quotient));
+
+            if (remainder == 0) break;
         }
-
-        if (remainder == 0)
-        {
-            return sb.ToString();
-        }
-
-        var hundred = DecimalPlaces.Hundred;
-
-        quotient = remainder / hundred.Value;
-        remainder %= hundred.Value;
-
-        if (quotient > 0)
-        {
-            sb.Append(GetRomanNumeral(hundred, quotient));
-        }
-
-        if (remainder == 0)
-        {
-            return sb.ToString();
-        }
-
-        var ten = DecimalPlaces.Ten;
-        quotient = remainder / ten.Value;
-        remainder %= ten.Value;
-
-        if (quotient > 0)
-        {
-            sb.Append(GetRomanNumeral(ten, quotient));
-        }
-
-        if (remainder == 0)
-        {
-            return sb.ToString();
-        }
-
-        sb.Append(GetRomanNumeral(DecimalPlaces.Unit, remainder));
 
         return sb.ToString();
     }
@@ -158,10 +123,25 @@ public class Convert
             public string Name { get; }
             public int Value { get; }
 
-            public static implicit operator string(PlaceValue placeValue)
+            public static implicit operator string(PlaceValue placeValue) => placeValue.Name;
+
+            public (int Quotient, int Remainder) Divide(int dividend) => Value == 1 ? (dividend, 0) : (dividend / Value, dividend % Value);
+
+            public static IEnumerable<KeyValuePair<int, PlaceValue>> GetAll()
             {
-                return placeValue.Name;
+                var type = typeof(DecimalPlaces);
+                var fields = type.GetFields(BindingFlags.Public | BindingFlags.Static);
+
+                foreach (var info in fields)
+                {
+                    if (info.GetValue(null) is PlaceValue locatedValue)
+                    {
+                        yield return new KeyValuePair<int, PlaceValue>(locatedValue.Value, locatedValue);
+                    }
+                }
             }
         }
+
+        public static readonly IDictionary<int, PlaceValue> PlaceValues = new Dictionary<int, PlaceValue>(PlaceValue.GetAll());
     }
 }

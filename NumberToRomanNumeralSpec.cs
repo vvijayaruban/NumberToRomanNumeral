@@ -36,6 +36,20 @@ public class NumberToRomanNumeralSpec
     {
         Should.Throw<ArgumentOutOfRangeException>(() => Convert.ToRomanNumeral(2001));
     }
+    
+    [Theory, MemberData(nameof(ReadTestDataFromTextFile))]
+    public void Two_or_more_decimal_digits_would_give_Roman_numeral_by_appending_each_from_highest_to_lowest(int number, string result)
+    {
+        Convert.ToRomanNumeral(number).ShouldBe(result);
+    }
+
+    [Theory, MemberData(nameof(ReadIndividualDecimalPlacesTable))]
+    public void
+        Validate_Individual_Decimal_Places_Table(
+            string decimalPlace, int digit, string roman)
+    {
+        Convert.GetRomanNumeral(decimalPlace, digit).ShouldBe(roman);
+    }
 
     public static TheoryData<int, string> ReadTestDataFromTextFile()
     {
@@ -51,12 +65,6 @@ public class NumberToRomanNumeralSpec
         }
 
         return data;
-    }
-
-    [Theory, MemberData(nameof(ReadTestDataFromTextFile))]
-    public void Two_or_more_decimal_digits_would_give_Roman_numeral_by_appending_each_from_highest_to_lowest(int number, string result)
-    {
-        Convert.ToRomanNumeral(number).ShouldBe(result);
     }
 
     public static TheoryData<string, int, string> ReadIndividualDecimalPlacesTable()
@@ -83,13 +91,5 @@ public class NumberToRomanNumeralSpec
         }
 
         return data;
-    }
-
-    [Theory, MemberData(nameof(ReadIndividualDecimalPlacesTable))]
-    public void
-        Validate_Individual_Decimal_Places_Table(
-            string decimalPlace, int digit, string roman)
-    {
-        Convert.GetRomanNumeral(decimalPlace, digit).ShouldBe(roman);
     }
 }
