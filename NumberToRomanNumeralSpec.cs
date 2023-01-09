@@ -69,17 +69,17 @@ public class NumberToRomanNumeralSpec
 
         foreach (var (line, index) in lines.Skip(1).Select((x, i) => (x, i)))
         {
-            var lingSplits = line.Split('\t');
-            var digit = int.Parse(lingSplits.First().Trim());
+            var lineSplits = line.Split('\t');
+            var digit = int.Parse(lineSplits.First().Trim());
 
             if (index < 2)
             {
-                data.Add(headings[1], digit, lingSplits[1]);
+                data.Add(headings[1], digit, lineSplits[1]);
             }
 
-            data.Add(headings[2], digit, lingSplits[2]);
-            data.Add(headings[3], digit, lingSplits[3]);
-            data.Add(headings[4], digit, lingSplits[4]);
+            data.Add(headings[2], digit, lineSplits[2]);
+            data.Add(headings[3], digit, lineSplits[3]);
+            data.Add(headings[4], digit, lineSplits[4]);
         }
 
         return data;
